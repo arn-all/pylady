@@ -1,4 +1,4 @@
-# pylady
+# PyLaDy
 
 ## Usage
 
