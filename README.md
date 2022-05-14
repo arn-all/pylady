@@ -31,7 +31,7 @@
   mymodel = pylady.Model(ml_type=-1, descriptor=g2, database=mydb)
   
   # Run milady with -np 4  
-  mymodel.run(njobs=4, dir="/tmp/milady_0001/")
+  mymodel.fit(njobs=4, dir="/tmp/milady_0001/")
   
   # results are accessible through the Model object.  
   print(mymodel.db.systems[2][0].descriptors) # access descriptors of first system of 2nd category
