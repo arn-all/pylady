@@ -17,14 +17,14 @@
   # Systems can be passed as ase.atoms objects or .poscar file paths
   # each category is a list of pylady Systems
   categories = [[pylady.System(ase_atoms=ase_system1, weight_per_element=[1.0, 2.0]), 
-                 pylady.System(ase_atoms=ase_system2)]  # using equal weight if not specified
+                 pylady.System(ase_atoms=ase_system2)],
                 [pylady.System(poscar='file.poscar')]] 
   
   mydb = pylady.Database(categories, 
-                         w_energy_range = [[1.e2, 1.e6],[1.e2, 1.e6]], # for each category
-                         w_force_range  = [[1.e2, 1.e6],[1.e2, 1.e6]],
-                         w_stress_range = [[1.e2, 1.e6],[1.e2, 1.e6]],
-                         fit=['sfe', 'efs']) 
+                         w_energy_range = [[1.e2, 1.e6], [1.e2, 1.e6]], # for each category
+                         w_force_range  = [[1.e2, 1.e6], [1.e2, 1.e6]],
+                         w_stress_range = [[1.e2, 1.e6], [1.e2, 1.e6]],
+                         fit = ['sfe', 'efs']) 
                          # whether to fit stress, force and energy or only a subset (eg. 'e', 'se'). Insensitive to order.
  
   # Put everything together
