@@ -6,6 +6,7 @@
 ```py
   import pylady
   import ase
+  from glob import glob
   
   # Choose a descriptor
   g2 = pylady.descriptors.G2(n_g2_eta=3, eta_max_g2=1.1)
@@ -15,12 +16,12 @@
   ase_system2 = ase.Atoms([Atom('N', (0, 0, 0)), Atom('O', (0, 0, 1))])
 
   # Systems can be passed as ase.atoms objects or .poscar file paths
-  # each category is a list of pylady Systems
-  categories = [[pylady.System(ase_atoms=ase_system1, weight_per_element=[1.0, 2.0]), 
+  # Each collection is a list of pylady.System objects
+  collections = [[pylady.System(ase_atoms=ase_system1, weight_per_element=[1.0, 2.0]), 
                  pylady.System(ase_atoms=ase_system2)],
-                [pylady.System(poscar='file.poscar')]] 
+                [pylady.System(poscar=p) for p in glob("some/pattern.poscar")]] 
   
-  mydb = pylady.Database(categories, 
+  mydb = pylady.Database(collections, 
                          w_energy_range = [[1.e2, 1.e6], [1.e2, 1.e6]], # for each category
                          w_force_range  = [[1.e2, 1.e6], [1.e2, 1.e6]],
                          w_stress_range = [[1.e2, 1.e6], [1.e2, 1.e6]],
