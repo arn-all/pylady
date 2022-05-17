@@ -8,21 +8,17 @@
   import ase
   from glob import glob
   
-  # Choose a descriptor
   g2 = pylady.descriptors.G2(n_g2_eta=3, eta_max_g2=1.1)
   g3 = pylady.descriptors.Descriptor(type=2)
   
-  # create some dummy ase systems
-  ase_system1 = ase.Atoms([Atom('N', (0, 0, 0)), Atom('C', (0, 0, 1))])
-  ase_system2 = ase.Atoms([Atom('N', (0, 0, 0)), Atom('O', (0, 0, 1))])
-
-  # Systems can be passed as ase.atoms objects or .poscar file paths
+  # create some dummy ase system
+  ase_system = ase.Atoms([Atom('N', (0, 0, 0)), Atom('C', (0, 0, 1))])
 
   mydb = pylady.Database()  
   
   mydb.add(pylady.Collection(name='bulk_300K', 
-                             systems=[pylady.System(ase_atoms=ase_system1, weight_per_element=[1.0, 2.0]), 
-                                      pylady.System(ase_atoms=ase_system2)],
+                             systems=[pylady.System(ase_atoms=ase_system, weight_per_element=[1.0, 2.0]), 
+                                      pylady.System(ase_atoms=ase_system)],
                              w_energy_range = [1.e2, 1.e6],
                              w_force_range  = [1.e2, 1.e6], 
                              fit_with='ef'))
@@ -34,11 +30,12 @@
                              w_stress_range = [1.e2, 1.e6],
                              fit_with='efs')) # efs for 'energy, force, stress' 
   
+  # some attributes of the Database
   print(mydb.get_global_number_systems())
   mydb["some_defect"].set_w_energy_range([1, 1e8])
   mydb["some_defect"].set_fit_with('e')
  
-  for desc in g2, g3:
+  for desc in (g2, g3):
 
     mymodel = pylady.Model(ml_type=-1, descriptor=desc, database=mydb)
   
