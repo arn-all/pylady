@@ -15,16 +15,16 @@
   mydb.add(pylady.Collection(name='bulk_300K', 
                              systems=[pylady.System(poscar="bulk_300K_01.poscar", weight_per_element=[1.0, 2.0]), 
                                       pylady.System(poscar="bulk_300K_02.poscar")],
-                             w_energy_range = [1.e2, 1.e6],
-                             w_force_range  = [1.e2, 1.e6],
+                             w_energy = 1.e6,
+                             w_force  = 1.e6,
                              test_size=0.33,
                              fit_with='fe')) # for 'force, energy' 
                                   
   mydb.add(pylady.Collection(name='some_defect',
                              systems=[pylady.System(poscar=p) for p in glob("some/pattern.poscar")],
-                             w_energy_range = [1.e1, 1.e7],
-                             w_force_range  = [1.e3, 1.e6], 
-                             w_stress_range = [1.e2, 1.e6],
+                             w_energy = [1.e1, 1.e7],
+                             w_force  = [1.e3, 1.e6], 
+                             w_stress = [1.e2, 1.e6],
                              fit_with='efs')) # efs for 'energy, force, stress' 
   
   # some attributes of the Database
