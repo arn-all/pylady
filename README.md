@@ -47,3 +47,35 @@
     print(mymodel.design_matrix)
   
 ```
+
+## Tools
+
+**Available as CLI & python funcs**
+
+- Plot train/test accuracy:
+
+  ```bash
+  pylady plot -d db_model.in --test "test_*.out" --train "train*.out" --save "graph.pdf"
+  ```
+  
+  ```py
+  import pylady.plot
+  pylady.plot(dbfile="db_model.in", test_files="test*.out", train_files="train*.out")
+  ```
+
+
+- Save configurations found in MD outcar files matching the glob pattern `"file_*.outcar"`. Only save one configuration every 60 timesteps (default is 0, i.e. only save the first step). Saved files have the name `file_*_{step}.mlposcar`.
+
+  ```bash
+  pylady convert --in "file_*.outcar" --out "dir/" --read_every 60  
+  ```
+  
+  ```py
+  import pylady.convert
+  pylady.convert(in="file_*.outcar", out="dir/", read_every=60)
+  ```
+
+
+
+
+
