@@ -5,23 +5,19 @@
 
 ```py
   import pylady
-  import ase
   from glob import glob
   
   g2 = pylady.descriptors.G2(n_g2_eta=3, eta_max_g2=1.1)
   g3 = pylady.descriptors.Descriptor(type=2)
   
-  # create some dummy ase system
-  ase_system = ase.Atoms([Atom('N', (0, 0, 0)), Atom('C', (0, 0, 1))])
-
   mydb = pylady.Database()  
   
   mydb.add(pylady.Collection(name='bulk_300K', 
-                             systems=[pylady.System(ase_atoms=ase_system, weight_per_element=[1.0, 2.0]), 
-                                      pylady.System(ase_atoms=ase_system)],
+                             systems=[pylady.System(poscar="bulk_300K_01.poscar", weight_per_element=[1.0, 2.0]), 
+                                      pylady.System(poscar="bulk_300K_02.poscar")],
                              w_energy_range = [1.e2, 1.e6],
-                             w_force_range  = [1.e2, 1.e6], 
-                             fit_with='ef'))
+                             w_force_range  = [1.e2, 1.e6],
+                             fit_with='fe')) # for 'force, energy' 
                                   
   mydb.add(pylady.Collection(name='some_defect',
                              systems=[pylady.System(poscar=p) for p in glob("some/pattern.poscar")],
@@ -35,6 +31,15 @@
   mydb["some_defect"].set_w_energy_range([1, 1e8])
   mydb["some_defect"].set_fit_with('e')
  
+  # shows the db as a pandas.DataFrame with 1 system per line, and columns: 
+  # name, system filename, w_energy_min, w_energy_max, ..., fit_with, weight_per_element 
+  print(mydb.as_df())
+  
+  # save and reload DB
+  mydb.as_df().to_json("mydb.json")
+  print(pylady.Database(from_json="mydb.json").as_df())
+  
+
   for desc in (g2, g3):
 
     mymodel = pylady.Model(ml_type=-1, descriptor=desc, database=mydb)
