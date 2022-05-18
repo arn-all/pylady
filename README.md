@@ -17,6 +17,7 @@
                                       pylady.System(poscar="bulk_300K_02.poscar")],
                              w_energy_range = [1.e2, 1.e6],
                              w_force_range  = [1.e2, 1.e6],
+                             test_size=0.33,
                              fit_with='fe')) # for 'force, energy' 
                                   
   mydb.add(pylady.Collection(name='some_defect',
