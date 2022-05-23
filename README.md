@@ -62,7 +62,9 @@
 - Plot train/test accuracy:
 
   ```bash
-  pylady plot -d db_model.in --test "test_*.out" --train "train*.out" --save "graph.pdf"
+  pylady plot -db_in_file db_model.in --test "test_*.out" --train "train*.out" --save "graph.pdf"
+
+  pylady plot --db db.json --fit_data fit.h5 --save "graph.pdf"
   ```
   
   ```py
