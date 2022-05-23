@@ -15,10 +15,11 @@
   mydb.add(pylady.Collection(name='bulk_300K', 
                              systems=[pylady.System(poscar="bulk_300K_01.poscar", weight_per_element=[1.0, 2.0]), 
                                       pylady.System(poscar="bulk_300K_02.poscar")],
-                             w_energy = 1.e6,
+                             w_energy = 1.e6, # enforce a value of weight instead of optimizing
                              w_force  = 1.e6,
                              test_size=0.33,
-                             fit_with='fe')) # for 'force, energy' 
+                             fit_forces=False,
+                             fit_energies=True)) # defaults to True 
                                   
   mydb.add(pylady.Collection(name='some_defect',
                              systems=[pylady.System(poscar=p) for p in glob("some/pattern.poscar")],
@@ -38,15 +39,15 @@
   
   # save and reload DB
   mydb.as_df().to_json("mydb.json")
-  print(pylady.Database(from_json="mydb.json").as_df())
+  df = pylady.Database(from_json="mydb.json").as_df()
   
 
   for desc in (g2, g3):
 
     mymodel = pylady.Model(ml_type=-1, descriptor=desc, database=mydb)
   
-    # Run milady with -np 4, in a tmp dir and with additional args
-    mymodel.fit(njobs=4, dir="/tmp/milady_0001/", args=("n_g3_lambda=3", "seed=24"))
+    # Run milady with -np 4, in a tmp dir and with additional kwargs
+    mymodel.fit(njobs=4, dir="/tmp/milady_0001/", n_g3_lambda=3, seed=24)
   
     # results are accessible through the Model object.  
     print(mymodel.db["some_defect"][0].descriptors) # access descriptors of first system of the "some_defect" collection
