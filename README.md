@@ -30,8 +30,8 @@
   
   # some attributes of the Database
   print(mydb.get_global_number_systems())
-  mydb["some_defect"].set_w_energy_range([1, 1e8])
-  mydb["some_defect"].set_fit_with('e')
+  mydb.collections["some_defect"].set_w_energy_range([1, 1e8])
+  mydb.collections["some_defect"].set_fit_with('e')
  
   # shows the db as a pandas.DataFrame with 1 system per line, and columns: 
   # name, system filename, w_energy_min, w_energy_max, ..., fit_with, weight_per_element 
@@ -39,7 +39,7 @@
   
   # save and reload DB
   mydb.as_df().to_json("mydb.json")
-  df = pylady.Database(from_json="mydb.json").as_df()
+  df = pylady.Database.from_json("mydb.json").as_df()
   
 
   for desc in (g2, g3):
