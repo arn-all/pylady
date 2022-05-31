@@ -34,14 +34,14 @@ class Collection():
     # name is ignored when checking equality
     name: str = field(validator=validators.instance_of(str), eq=False)
 
-    w_energy: float or list[float] = field(default=0.0, validator=check_fitting_weights)
-    w_force:  float or list[float] = field(default=0.0, validator=check_fitting_weights)
-    w_stress: float or list[float] = field(default=0.0, validator=check_fitting_weights)
+    w_energy: float or 'list[float]' = field(default=0.0, validator=check_fitting_weights)
+    w_force:  float or 'list[float]' = field(default=0.0, validator=check_fitting_weights)
+    w_stress: float or 'list[float]' = field(default=0.0, validator=check_fitting_weights)
 
     systems: list = field(factory=list, 
                             validator=validators.instance_of(list))
     
-    descriptors: list[np.array] = field(factory=list)
+    descriptors: 'list[np.array]' = field(factory=list)
 
     @systems.validator
     def files_exist(self, attribute, value):
