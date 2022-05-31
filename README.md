@@ -8,7 +8,7 @@
   from glob import glob
   
   g2 = pylady.descriptors.G2(n_g2_eta=3, eta_max_g2=1.1)
-  g3 = pylady.descriptors.Descriptor(type=2)
+  g3 = pylady.descriptors.Descriptor(desc_type=2)
   
   mydb = pylady.Database()  
   
@@ -16,22 +16,18 @@
                              systems=[pylady.System(poscar="bulk_300K_01.poscar", weight_per_element=[1.0, 2.0]), 
                                       pylady.System(poscar="bulk_300K_02.poscar")],
                              w_energy = 1.e6, # enforce a value of weight instead of optimizing
-                             w_force  = 1.e6,
-                             test_size=0.33,
-                             fit_forces=False,
-                             fit_energies=True)) # defaults to True 
-                                  
+                             w_force  = 0,    # do not fit forces
+                             test_size=0.33)) # size of the test set
+
   mydb.add(pylady.Collection(name='some_defect',
                              systems=[pylady.System(poscar=p) for p in glob("some/pattern.poscar")],
-                             w_energy = [1.e1, 1.e7],
+                             w_energy = [1.e1, 1.e7], # range for fitting weight
                              w_force  = [1.e3, 1.e6], 
                              w_stress = [1.e2, 1.e6],
                              fit_with='efs')) # efs for 'energy, force, stress' 
   
   # some attributes of the Database
   print(mydb.get_global_number_systems())
-  mydb.collections["some_defect"].set_w_energy_range([1, 1e8])
-  mydb.collections["some_defect"].set_fit_with('e')
  
   # shows the db as a pandas.DataFrame with 1 system per line, and columns: 
   # name, system filename, w_energy_min, w_energy_max, ..., fit_with, weight_per_element 
