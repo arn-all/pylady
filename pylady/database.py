@@ -26,6 +26,19 @@ def file_fingerprint(file_name):
     with open(file_name, 'r') as f:
         return hashlib.sha1(f.read().encode()).hexdigest()
 
+
+@define()
+class System():
+    """A collection of atomic systems, which share the same ML fitting hyperparameters.
+    """
+
+    # name is ignored when checking equality
+    poscar: str = field(validator=validators.instance_of(str))
+    weight_per_element: list = field(factory=list, kw_only=True)
+
+    def check_readable(self):
+        ase.io.vasp.read_vasp(self.poscar)
+
 @define(kw_only=True) # no positional argument
 class Collection():
     """A collection of atomic systems, which share the same ML fitting hyperparameters.
@@ -49,7 +62,7 @@ class Collection():
         for f in value:
             # Check for file existence.
             # Format correctness will be checked at read-time
-            assert Path(f).is_file(), f"Non existing file: {f}"
+            assert Path(f.poscar).is_file(), f"Non existing file: {f}"
 
     test_size: float = field(default=0.0, validator=validators.instance_of(float))
     @test_size.validator
@@ -60,7 +73,7 @@ class Collection():
     
     def __attrs_post_init__(self):
         for s in self.systems:
-            self.fingerprints.append(file_fingerprint(s))
+            self.fingerprints.append(file_fingerprint(s.poscar))
 
     def check_systems_are_readable(self):
         """Open vasp files to check they are ase-readable.
@@ -68,9 +81,9 @@ class Collection():
         """
         for system in self.systems:
             try:
-                ase.io.vasp.read_vasp(system)
+                system.check_readable()
             except:
-                raise RuntimeError(f"Error while reading file {system} due to format or access issue.\n")
+                raise RuntimeError(f"Error while reading file {system.poscar} due to format or access issue.\n")
 
 @define(kw_only=True)
 class Database():

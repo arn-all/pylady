@@ -1,7 +1,7 @@
 import pylady
 import pytest
 
-systems = ["pylady/tests/valid.poscar"]
+systems = [pylady.System("pylady/tests/valid.poscar")]
 args_values = [int(2), 2.5]
 
 @pytest.mark.parametrize("r", args_values)
