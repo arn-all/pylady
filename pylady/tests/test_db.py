@@ -3,21 +3,24 @@
 from numpy import empty_like
 import pylady
 import pytest
+import pytest, inspect
+from pathlib import Path
 
-empty_system = pylady.System('pylady/tests/empty.md')
+tests_dir = Path(inspect.getfile(pylady)).parent.joinpath("tests")
+empty_system = pylady.System(str(tests_dir.joinpath('empty.md')))
 
 ## Collection
 
 def test_create_collection():
     """Typical usecase of Collection class"""
     c1 = pylady.Collection(name="1",
-                    systems=[pylady.System('pylady/tests/empty.md')], 
+                    systems=[empty_system], 
                     w_energy=1.0, w_force=1.0, w_stress=1.0)
 
 def test_create_collection_missing_file():
     with pytest.raises(AssertionError):
         c1 = pylady.Collection(name="1",
-                        systems=[pylady.System('pylady/tests/non_existing_file.foo')], 
+                        systems=[pylady.System(str(tests_dir.joinpath('non_existing_file.foo')))], 
                         w_energy=1.0)
 
 

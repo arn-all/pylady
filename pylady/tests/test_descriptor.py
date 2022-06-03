@@ -1,7 +1,10 @@
 import pylady
 import pytest
+import inspect
+from pathlib import Path 
 
-systems = [pylady.System("pylady/tests/valid.poscar")]
+tests_dir = Path(inspect.getfile(pylady)).parent.joinpath("tests")
+systems = [pylady.System(str(tests_dir.joinpath("valid.poscar")))]
 args_values = [int(2), 2.5]
 
 @pytest.mark.parametrize("r", args_values)

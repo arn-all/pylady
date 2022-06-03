@@ -23,8 +23,11 @@ class Descriptor():
         db = Database(collections=Collection(name="descriptor_only", 
                                             systems=systems))
         m = Model(database=db, descriptor=self, ml_type=-1)
-        m.run()
+        m.fit()
         return m.database.collections["descriptor_only"].descriptors
+
+    def get_arguments(self):
+        return {}
 
     @classmethod
     def G2(cls, r_cut):

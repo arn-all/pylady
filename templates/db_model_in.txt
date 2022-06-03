@@ -1,0 +1,6 @@
+
+## id subclass(3d) nb_files nb_train    
+{% for collection in database.collections.values() %}
+# {{collection.name}}
+{{collection.index}} {{sub_id}} {{collection.systems|count}} {{collection.n_train_systems}} {{collection.start_train_from_system_n}} {{collection.fit_energy}} {{collection.fit_force}} {{collection.fit_stress}} {{collection.weight_energy_min}} {{collection.weight_energy_max}} {{collection.weight_force_min}} {{collection.weight_force_max}} {{collection.weight_stress_min}} {{collection.weight_stress_max}}
+{% endfor %}
