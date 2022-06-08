@@ -23,8 +23,7 @@
                              systems=[pylady.System(poscar=p) for p in glob("some/pattern.poscar")],
                              w_energy = [1.e1, 1.e7], # range for fitting weight
                              w_force  = [1.e3, 1.e6], 
-                             w_stress = [1.e2, 1.e6],
-                             fit_with='efs')) # efs for 'energy, force, stress' 
+                             w_stress = [1.e2, 1.e6])) # efs for 'energy, force, stress' 
   
   # some attributes of the Database
   print(mydb.get_global_number_systems())
