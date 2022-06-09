@@ -16,6 +16,13 @@ from attrs.validators import instance_of
 # Classes are written based on the attrs library to avoid boilerplate code.
 # Please refer to attrs docs for details.
 
+import yaml
+from os.path import expanduser
+
+with open(expanduser("~/.config/milady.yml"), "r") as f:
+    MILADY_CONFIG = yaml.full_load(f)
+
+
 @define(kw_only=True) # no positional argument
 class Model():
     """The ML model class, which associates hyperparameters and a database.
@@ -40,7 +47,7 @@ class Model():
     def __attrs_post_init__(self):
         self.kw_arguments = self.get_arguments()
 
-    def fit(self, n_jobs=1, save_directory="mld_results", **kwargs):
+    def fit(self, n_jobs=1, save_directory="milady_results", **kwargs):
         """Prepare the run, fit the Milady model and retrieve data.
         """
         # create folder for writing ouput
@@ -50,8 +57,8 @@ class Model():
         # create tempdir to run milady
         with tempfile.TemporaryDirectory() as tmpdirname:
             self.pre_run(run_directory=tmpdirname)
-            self.run(n_jobs, run_directory=tmpdirname)
-            self.post_run(run_directory=tmpdirname, output_directory=save_directory)
+            completed = self.run(n_jobs, run_directory=tmpdirname)
+            self.post_run(run_directory=tmpdirname, completed_process=completed, output_directory=save_directory)
 
     def get_default_arguments(self):
         ## Read from Json
@@ -67,6 +74,9 @@ class Model():
                                self.kw_arguments]:
             args.update(user_arguments)
 
+    def arguments_as_ml_file(self):
+        return " "
+
     def pre_run(self, run_directory):
         """Prepare run.
         Populate the directory where Milady will be run. 
@@ -80,14 +90,29 @@ class Model():
 
     def run(self, n_jobs, run_directory):
         """Run the Milady Fortran code externally on n_jobs parallel mpi processes."""
-        # status = subprocess.run()
-        # return status
-        pass
+        
+        set_env_cmd = MILADY_CONFIG["set_env_cmd"]
+        run_milady_cmd = MILADY_CONFIG["run_milady_cmd"].format(n_jobs=n_jobs)
+        
+        status = subprocess.run(set_env_cmd + " && " + run_milady_cmd, 
+                                shell=True,
+                                cwd=run_directory,
+                                capture_output=True)
+        
+        print(status.stdout.decode())
+        return status
 
-    def post_run(self, run_directory, output_directory):
+    def post_run(self, run_directory, completed_process, output_directory):
         """Post run step. Time to explore results !
         Create a directory with unique ID model-name_model-sha in save_directory and store results there.
         OR use HDF5 container !?"""
+
+        with open(Path(output_directory).joinpath("stdout.log"), "w") as f:
+            f.write(completed_process.stdout.decode())
+
+        with open(Path(output_directory).joinpath("stderr.log"), "w") as f:
+            f.write(completed_process.stdout.decode())
+
         self.parse_log()
         self.parse_descriptors()
 
@@ -95,9 +120,24 @@ class Model():
         return attrs.asdict(self)
 
     def populate_run_directory(self, directory):
-        """Create the directory if it does not exist, copy files necessary for milady run.
+        """Copy files necessary for milady run.
         """
+        def save_to_tmp_dir(name, content):
+            with open(Path(directory).joinpath(name), "w") as f:
+                f.write(content)
+
         db_model_in = self.fill_ml_file()
+
+        to_write = {"db_model.in": db_model_in,
+                    "name.in": "config",
+                    "config.ml": self.arguments_as_ml_file(),
+                    "eamtab.potin": " ",
+                    "config.din": " ",
+                    "config.gin": " "}
+        
+        for name, contents in to_write.items():
+            save_to_tmp_dir(name, contents)
+    
 
     def fill_ml_file(self):
         """Prepare milady configuration file by template filling.
@@ -108,7 +148,7 @@ class Model():
         env = Environment(loader=FileSystemLoader(template_dir))
         
         template = env.get_template("db_model_in.txt")
-        return template.render(database=self.database, sub_id="111", undefined=StrictUndefined)
+        return template.render(database=self.database)
 
     def parse_log(self):
         """"Parse Milady logs after runtime."""
