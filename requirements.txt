@@ -4,3 +4,4 @@ ase==3.22.1
 attrs
 pytest
 jinja2
+pandas

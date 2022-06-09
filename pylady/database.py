@@ -15,7 +15,7 @@ from pylady.descriptors import Descriptor
 # Please refer to attrs docs for details.
 
 def check_fitting_weights(instance, attribute, value):
-    if not isinstance(value, float):
+    if not isinstance(value, (float, int)):
         if (len(value)!=2) or (not isinstance(value[0], (int, float))) or (not isinstance(value[1], (int, float))):
             raise ValueError(f"Incorrect value or type for {attribute.name}, got: {value}")
 
@@ -38,6 +38,7 @@ class System():
     # name is ignored when checking equality
     poscar: str = field(validator=validators.instance_of(str))
     weight_per_element: list = field(factory=list, kw_only=True)
+    descriptors: np.ndarray = field(default=None)
 
     def check_readable(self):
         ase.io.vasp.read_vasp(self.poscar)

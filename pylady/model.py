@@ -4,6 +4,7 @@ import tempfile
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 import inspect 
 import pylady
+import numpy as np
 
 from pylady.database import Database
 from pylady.descriptors import Descriptor
@@ -34,11 +35,12 @@ class Model():
     database: Database = field(validator=validators.instance_of(Database))
     safety_checks: bool = field(default=True, validator=validators.instance_of(bool))
     kw_arguments: dict = field(factory=dict)
+    design_matrix: np.ndarray = field(default=None)
 
     def __attrs_post_init__(self):
         self.kw_arguments = self.get_arguments()
 
-    def fit(self, n_jobs=1, save_directory="mld_results"):
+    def fit(self, n_jobs=1, save_directory="mld_results", **kwargs):
         """Prepare the run, fit the Milady model and retrieve data.
         """
         # create folder for writing ouput
