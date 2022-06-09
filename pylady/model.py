@@ -95,7 +95,7 @@ class Model():
     def populate_run_directory(self, directory):
         """Create the directory if it does not exist, copy files necessary for milady run.
         """
-        self.fill_ml_file()
+        db_model_in = self.fill_ml_file()
 
     def fill_ml_file(self):
         """Prepare milady configuration file by template filling.
@@ -106,8 +106,7 @@ class Model():
         env = Environment(loader=FileSystemLoader(template_dir))
         
         template = env.get_template("db_model_in.txt")
-        rendered = template.render(database=self.database, sub_id="111", undefined=StrictUndefined)
-        raise ValueError("Not Implemented: missing attributes of collection & raising error for missing keys")
+        return template.render(database=self.database, sub_id="111", undefined=StrictUndefined)
 
     def parse_log(self):
         """"Parse Milady logs after runtime."""
@@ -119,3 +118,4 @@ class Model():
         """Load descriptors files as numpy arrays."""
         # Load descriptors files in numpy nd_array
         # 1st column IS NOT an index
+        pass

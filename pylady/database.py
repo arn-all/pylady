@@ -26,6 +26,9 @@ def file_fingerprint(file_name):
     with open(file_name, 'r') as f:
         return hashlib.sha1(f.read().encode()).hexdigest()
 
+def check_train_selection_method(instance, attribute, value):
+    supported_methods = ["first", "last", "random", "start_from"]
+    assert value in supported_methods, f"Incorrect selection method. Currently supported methods are:\n{supported_methods}"
 
 @define()
 class System():
@@ -47,6 +50,7 @@ class Collection():
     # name is ignored when checking equality
     name: str = field(validator=validators.instance_of(str), eq=False)
     index: int = field(default=0)
+    sub_id: str = field(default='111')
     w_energy: float or 'list[float]' = field(default=0.0, validator=check_fitting_weights)
     w_force:  float or 'list[float]' = field(default=0.0, validator=check_fitting_weights)
     w_stress: float or 'list[float]' = field(default=0.0, validator=check_fitting_weights)
@@ -72,15 +76,19 @@ class Collection():
         assert 0 <= value <= 1, f"Testing set size must be a float between 0 and 1, got: {value}"
 
     n_train_systems: int = field(default=None)
+    train_selection_method: str = field(default="first", validator=check_train_selection_method)
 
     fingerprints: list = field(factory=list)
-    
+    weight_params = field(factory=dict)
+
     def __attrs_post_init__(self):
         for s in self.systems:
             self.fingerprints.append(file_fingerprint(s.poscar))
         if self.n_train_systems is None:
             self.n_train_systems = round((len(self.systems)-self.start_train_from_system_n)*(1-self.test_size))
         assert self.start_train_from_system_n + self.n_train_systems <= len(self.systems), "Number of systems to use for train + number of the first configuration to use exceeds the total number of systems."
+
+        self.construct_weight_dict()
 
     def check_systems_are_readable(self):
         """Open vasp files to check they are ase-readable.
@@ -91,6 +99,15 @@ class Collection():
                 system.check_readable()
             except:
                 raise RuntimeError(f"Error while reading file {system.poscar} due to format or access issue.\n")
+
+    def construct_weight_dict(self):
+        for weight, feature in zip((self.w_energy, self.w_force, self.w_stress), 
+                                    ('energy', 'force', 'stress')):
+            if not isinstance(weight, list): weight = [weight]
+            self.weight_params[feature] = {"fit": 'T' if ((weight[0]!=0)|(weight[-1]!=0)) else "F",
+                                            "optimize_w": (len(weight)==2),
+                                            "weight_min": weight[0],
+                                            "weight_max": weight[-1]}
 
 @define(kw_only=True)
 class Database():

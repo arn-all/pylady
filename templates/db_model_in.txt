@@ -2,5 +2,5 @@
 ## id subclass(3d) nb_files nb_train    
 {% for collection in database.collections.values() %}
 # {{collection.name}}
-{{collection.index}} {{sub_id}} {{collection.systems|count}} {{collection.n_train_systems}} {{collection.start_train_from_system_n}} {{collection.fit_energy}} {{collection.fit_force}} {{collection.fit_stress}} {{collection.weight_energy_min}} {{collection.weight_energy_max}} {{collection.weight_force_min}} {{collection.weight_force_max}} {{collection.weight_stress_min}} {{collection.weight_stress_max}}
+{{'%02d' % collection.index}} {{collection.sub_id}} {{collection.systems|count}} {{collection.n_train_systems}}{{" "+collection.start_train_from_system_n|string if collection.train_selection_method=="start_from"}} {{collection.weight_params.energy.fit}} {{collection.weight_params.force.fit}} {{collection.weight_params.stress.fit}} {{collection.weight_params.energy.weight_min}} {{collection.weight_params.energy.weight_max}} {{collection.weight_params.force.weight_min}} {{collection.weight_params.force.weight_max}} {{collection.weight_params.stress.weight_min}} {{collection.weight_params.stress.weight_max}}
 {% endfor %}
