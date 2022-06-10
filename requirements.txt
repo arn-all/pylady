@@ -5,3 +5,4 @@ attrs
 pytest
 jinja2
 pandas
+click

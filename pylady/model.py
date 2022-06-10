@@ -19,11 +19,19 @@ from attrs.validators import instance_of
 import json
 from os.path import expanduser
 
-with open(expanduser("~/.config/milady_config.json"), "r") as f:
-    MILADY_CONFIG = json.load(f)
+def load_global_config():
+    config_file = expanduser("~/.config/milady_config.json")
+    try:
+        with open(config_file, "r") as f:
+            config = json.load(f)
+        return config
+    except json.decoder.JSONDecodeError:
+        raise RuntimeError(f"Missing configuration file at {config_file}. Run `pylady setup` in a terminal.")
+
+MILADY_CONFIG = load_global_config()
 
 
-@define(kw_only=True) # no positional argument
+@define(kw_only=True)
 class Model():
     """The ML model class, which associates hyperparameters and a database.
 
