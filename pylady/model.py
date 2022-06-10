@@ -16,11 +16,11 @@ from attrs.validators import instance_of
 # Classes are written based on the attrs library to avoid boilerplate code.
 # Please refer to attrs docs for details.
 
-import yaml
+import json
 from os.path import expanduser
 
-with open(expanduser("~/.config/milady.yml"), "r") as f:
-    MILADY_CONFIG = yaml.full_load(f)
+with open(expanduser("~/.config/milady_config.json"), "r") as f:
+    MILADY_CONFIG = json.load(f)
 
 
 @define(kw_only=True) # no positional argument
