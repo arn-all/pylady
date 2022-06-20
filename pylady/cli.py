@@ -1,6 +1,3 @@
-from distutils.command.config import config
-from email.policy import default
-from tabnanny import check
 import click
 from os.path import expanduser
 import json
