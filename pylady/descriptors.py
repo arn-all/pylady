@@ -1,4 +1,5 @@
 from pathlib import Path
+from pylady.baseclass import BaseClass
 
 import attrs
 from attrs import define, field, validators
@@ -10,7 +11,7 @@ from attrs.validators import instance_of
 DEFAULTS = {"r_cut": 5.0}
 
 @define(kw_only=True) # no positional argument
-class Descriptor():
+class Descriptor(BaseClass):
     """Base descriptor class.
     """
 
@@ -21,18 +22,15 @@ class Descriptor():
     eta_max_g2 : float = field(default=0.0)
 
     def compute(self, systems):
-        from pylady.model import Model
-        from pylady.database import Database
         from pylady.database import Collection
+        from pylady.database import Database
+        from pylady.model import Model
 
         db = Database(collections=Collection(name="descriptor_only", 
                                             systems=systems))
         m = Model(database=db, descriptor=self, ml_type=-1)
         m.fit()
         return m.database.collections["descriptor_only"].descriptors
-
-    def get_arguments(self):
-        return {}
 
     @classmethod
     def G2(cls, r_cut=DEFAULTS["r_cut"], n_g2_eta=None, eta_max_g2=None):

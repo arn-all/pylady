@@ -9,7 +9,8 @@ import hashlib
 import numpy as np
 
 from pylady.descriptors import Descriptor
-
+import pylady.utils
+from pylady.baseclass import BaseClass
 # Note: 
 # Classes are written based on the attrs library to avoid boilerplate code.
 # Please refer to attrs docs for details.
@@ -37,14 +38,13 @@ class System():
 
     # name is ignored when checking equality
     poscar: str = field(validator=validators.instance_of(str))
-    weight_per_element: list = field(factory=list, kw_only=True)
     descriptors: np.ndarray = field(default=None)
 
     def check_readable(self):
         ase.io.vasp.read_vasp(self.poscar)
 
 @define(kw_only=True) # no positional argument
-class Collection():
+class Collection(BaseClass):
     """A collection of atomic systems, which share the same ML fitting hyperparameters.
     """
 
@@ -111,7 +111,7 @@ class Collection():
                                             "weight_max": weight[-1]}
 
 @define(kw_only=True)
-class Database():
+class BaseDatabase(BaseClass):
     """A database of all the different collections to use in a Model.
     Databases can be saved/loaded in JSON format for easy share and reuse.
     """
@@ -147,9 +147,6 @@ class Database():
     def clear_collections(self):
         self.collections = {}
 
-    def as_dict(self):
-        return attrs.asdict(self)
-
     def as_df(self):
         import pandas as pd
         return pd.DataFrame.from_dict(self.as_dict()["collections"], 
@@ -170,3 +167,7 @@ class Database():
         for c in self.collections.values():
             hashes += c.fingerprints
         return len(hashes) == len(set(hashes))
+
+Database = attrs.make_class('Database', 
+                            pylady.utils.get_defaults_as_fields("database")["database"], 
+                            bases=(BaseDatabase,))
