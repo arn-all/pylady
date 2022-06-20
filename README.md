@@ -10,10 +10,10 @@
   g2 = pylady.descriptors.G2(n_g2_eta=3, eta_max_g2=1.1)
   g3 = pylady.descriptors.Descriptor(desc_type=2)
   
-  mydb = pylady.Database()  
+  mydb = pylady.Database(weight_per_element=[1.0, 2.0])  
   
   mydb.add(pylady.Collection(name='bulk_300K', 
-                             systems=[pylady.System(poscar="bulk_300K_01.poscar", weight_per_element=[1.0, 2.0]), 
+                             systems=[pylady.System(poscar="bulk_300K_01.poscar"), 
                                       pylady.System(poscar="bulk_300K_02.poscar")],
                              w_energy = 1.e6, # enforce a value of weight instead of optimizing
                              w_force  = 0,    # do not fit forces

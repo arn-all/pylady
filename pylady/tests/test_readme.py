@@ -13,10 +13,10 @@ def test_readme_example():
     g2 = pylady.Descriptor.G2(n_g2_eta=3, eta_max_g2=1.1)
     g3 = pylady.Descriptor(desc_type=2)
     
-    mydb = pylady.Database()  
+    mydb = pylady.Database(weight_per_element=[1.0, 2.0])  
     
     mydb.add(pylady.Collection(name='bulk_300K', 
-                                systems=[pylady.System(poscar=str(tests_dir.joinpath("valid.poscar")), weight_per_element=[1.0, 2.0]), 
+                                systems=[pylady.System(poscar=str(tests_dir.joinpath("valid.poscar"))), 
                                         pylady.System(poscar=str(tests_dir.joinpath("valid.poscar")))],
                                 w_energy = 1.e6, # enforce a value of weight instead of optimizing
                                 w_force  = 0,    # do not fit forces
