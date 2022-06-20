@@ -5,7 +5,6 @@
 
 ```py
   import pylady as pl
-  from glob import glob
 ```
 
 **Descriptor selection**
@@ -15,6 +14,13 @@
   g3 = pl.descriptors.Descriptor(desc_type=2)
 ```
 
+**Compute descriptor (no fitting)**
+
+```py
+    d = pylady.Descriptor(desc_type=1, r_cut=r)
+    d.compute([pylady.System(f) for f in f_list])
+```
+
 **Database definition**
 
 - Each atomic configuration is stored in a `pl.System` object
@@ -22,6 +28,8 @@
 - The `pl.Database` gathers a set of `Collection` objects.
 
 ```py
+  from glob import glob
+
   mydb = pl.Database(weight_per_element=[1.0, 2.0])  
   
   mydb.add(pl.Collection(name='bulk_300K', 
