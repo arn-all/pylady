@@ -6,6 +6,7 @@ import pylady.descriptors
 import pylady.model
 import pylady.plot
 import pylady.cli
+import pylady.utils
 
 def cmd_cli():
     pylady.cli.cli()

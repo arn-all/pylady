@@ -79,20 +79,6 @@ class BaseModel(BaseClass):
                           completed_process=completed, 
                           output_directory=save_directory)
 
-    # def get_arguments(self):
-    #     """Get arguments that will be passed to Milady.
-    #     Mixes user-specified self.kw_arguments, self.descriptor / database args and default kw values
-    #     """
-    #     args = pylady.utils.get_default_as_dict()
-    #     args["descriptors"].update(self.descriptor.get_arguments())
-    #     args["database"].update(self.database.get_arguments())
-    #     args["model"].update(self.kw_arguments)
-
-    #     for user_arguments in [self.descriptor.get_arguments(),
-    #                            self.database.get_arguments(),
-    #                            self.kw_arguments]:
-    #         args.update(user_arguments)
-
     def pre_run(self, run_directory):
         """Prepare run.
         Populate the directory where Milady will be run. 
@@ -158,7 +144,10 @@ class BaseModel(BaseClass):
         env = Environment(loader=FileSystemLoader(template_dir))
         
         template = env.get_template(file)
-        return template.render(model=self, defaults=pylady.utils.get_default_as_dict())
+        return template.render(model=self, 
+                                default_db=pylady.utils.get_default_parameters()["database"],
+                                default_model=pylady.utils.get_default_parameters()["model"],
+                                default_descriptors=pylady.utils.get_default_parameters()["descriptors"])
 
     def parse_log(self):
         """"Parse Milady logs after runtime."""
@@ -173,5 +162,5 @@ class BaseModel(BaseClass):
         pass
 
 Model = attrs.make_class('Model', 
-                        pylady.utils.get_defaults_as_fields("model")["model"], 
+                        pylady.utils.get_defaults_as_fields("model"), 
                         bases=(BaseModel,))

@@ -169,5 +169,5 @@ class BaseDatabase(BaseClass):
         return len(hashes) == len(set(hashes))
 
 Database = attrs.make_class('Database', 
-                            pylady.utils.get_defaults_as_fields("database")["database"], 
+                            pylady.utils.get_defaults_as_fields("database"), 
                             bases=(BaseDatabase,))

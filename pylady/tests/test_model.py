@@ -14,7 +14,7 @@ def build_model(system, safety_checks=True, start_train_from_system_n=0):
                     start_train_from_system_n=start_train_from_system_n)
     desc = pylady.Descriptor(desc_type=1, r_cut=4)
     d = pylady.Database(collections=[c1])
-    m = pylady.Model(database=d, descriptor=desc, ml_type=-1, kw_arguments={"1":1}, safety_checks=safety_checks)
+    m = pylady.Model(database=d, descriptor=desc, ml_type=-1, safety_checks=safety_checks)
     return m
 
 

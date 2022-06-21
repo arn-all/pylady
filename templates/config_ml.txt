@@ -4,7 +4,7 @@
 ! DESCRIPTOR
 !!!!!!!!!!!!
 {% for key, value in model.descriptor.get_config().items() %}
-! {{key}} (default: {{defaults['descriptors'][key]}})
+! {{key}} (default: {{default_descriptors[key]}})
 {{key}}={{value}}
 {% endfor %}
 
@@ -12,7 +12,7 @@
 ! DATABASE
 !!!!!!!!!!
 {% for key, value in model.database.get_config().items() %}
-! {{key}} (default: {{defaults['database'][key]}})
+! {{key}} (default: {{default_db[key]}})
 {{key}}={{value}}
 {% endfor %}
 
@@ -20,7 +20,7 @@
 ! MODEL
 !!!!!!!
 {% for key, value in model.get_config().items() %}
-! {{key}} (default: {{defaults['model'][key]}})
+! {{key}} (default: {{default_model[key]}})
 {{key}}={{value}}
 {% endfor %}
 
