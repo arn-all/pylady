@@ -4,7 +4,6 @@ import tempfile
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 import inspect
 
-from traitlets import default 
 import pylady
 import numpy as np
 import logging, uuid
