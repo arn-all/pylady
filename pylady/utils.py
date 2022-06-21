@@ -4,27 +4,16 @@ import json
 from attrs import field
 import re
 
-def default_json_from_old_input():
-    
-    with open(Path(__file__).parents[1].joinpath('lib/old_input.ml'), 'r') as f:
-        default_config = f.readlines()
-
-    param = {}
-    for l in default_config:
-        c = l.split("=")
-        if len(c) == 2:
-            param[c[0]] = c[1].strip()
-    
-    with open(Path(__file__).parents[1].joinpath('lib/docs_options.json'), 'w') as f:
-        json.dump(param, f, indent=2)
 
 def format_key(key):
+    """Remove curly brackets (), transform to lowercase, strip, replace whitespace with underscore.
+    """
     key = key.replace("(", "").replace(")", "")
     key = key.lower().strip().replace(" ", "_")
     return key
 
 def split_sections():
-
+    """Parse old_input file and return a nested dict with each section and the keys:values parameters."""
     with open(Path(__file__).parents[1].joinpath('lib/old_input.ml'), 'r') as f:
         default_config = f.readlines()
 
@@ -43,6 +32,9 @@ def split_sections():
     return sections
 
 def get_default_parameters():
+    """Map sections of the old_input.ml file to objects of pylady, and return a nested dict 
+    containing {keys:default_values} for each pylady object."""
+
     default_parameters = {}
     categories = {"database": ["db_and_elements"],
                  "model": ["input", 
@@ -73,7 +65,11 @@ def get_default_parameters():
     return default_parameters
 
 def get_defaults_as_fields(category):
+    """Pass a dict of {parameter:attrs.field(default=default_value...)} to create pylady objects 
+    with the relevant parameters and their default values.
     
+    category: either 'database', 'model' or 'descriptors'
+    """
     d = {parameter: field(default=value, 
                             metadata={"milady_config":True, "milady_config_type":category}) 
             for parameter, value in get_default_parameters()[category].items()}
