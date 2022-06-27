@@ -90,12 +90,16 @@ class BaseModel(BaseClass):
 
         self.populate_run_directory(run_directory)
 
-    def run(self, n_jobs, run_directory):
+    def run(self, n_cpu, run_directory):
         """Run the Milady Fortran code externally on n_jobs parallel mpi processes."""
         
         set_env_cmd = MILADY_CONFIG["set_env_cmd"]
-        run_milady_cmd = MILADY_CONFIG["run_milady_cmd"].format(n_jobs=n_jobs)
-        
+        if '{n_cpu}' in MILADY_CONFIG["run_milady_cmd"]:
+            run_milady_cmd = MILADY_CONFIG["run_milady_cmd"].format(n_cpu=n_cpu)
+        else: 
+            logging.warning("No {n_cpu} field in run_milady_cmd. Using 1 cpu by default.")
+            run_milady_cmd = MILADY_CONFIG["run_milady_cmd"].format(n_cpu=1)
+            
         status = subprocess.run(set_env_cmd + " && " + run_milady_cmd, 
                                 shell=True,
                                 cwd=run_directory,

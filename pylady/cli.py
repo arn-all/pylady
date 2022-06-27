@@ -10,7 +10,7 @@ def cli():
     pass
 
 set_env_help = "Pre-run command (e.g. `module load openmpi`)"
-run_milady_help = "Milady run command (e.g. `mpirun -np ${n_cpu} /path/to/milady.exe`)"
+run_milady_help = "Milady run command (e.g. `mpirun -np {n_cpu} /path/to/milady.exe`)"
 
 @cli.command(help="Create a global milady_config.json config file.")
 @click.option('--set-env-cmd', prompt=set_env_help, help=set_env_help)
