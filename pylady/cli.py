@@ -10,7 +10,7 @@ def cli():
     pass
 
 set_env_help = "Pre-run command (e.g. `module load openmpi`)"
-run_milady_help = "Milady run command (e.g. `mpirun -np 2 /path/to/milady.exe`)"
+run_milady_help = "Milady run command (e.g. `mpirun -np ${n_cpu} /path/to/milady.exe`)"
 
 @cli.command(help="Create a global milady_config.json config file.")
 @click.option('--set-env-cmd', prompt=set_env_help, help=set_env_help)
@@ -37,7 +37,7 @@ def create_config(set_env_cmd, run_milady_cmd, force, location):
             click.echo("No valid config exist at location.")
             save_config()
         else:
-            if input(f'File exists in {config_location}. Override ? y/(n): ')=='y':    
+            if input(f'File exists in {config_location}. Overwrite ? y/(n): ')=='y':    
                 save_config()
 
 
@@ -56,6 +56,7 @@ def check_config(location):
         click.secho(e, fg="red")
     else:
         if isinstance(contents["set_env_cmd"], str) & isinstance(contents["run_milady_cmd"], str):
-            click.secho(f"Config file seems valid: {contents}")
+            click.secho("Config file seems valid", fg="green")
         else:
-            click.secho(f"Config file doesn't have the necessary keys: {contents}", fg="bright_red")
+            click.secho("Config file doesn't have the necessary keys", fg="bright_red")
+        click.secho(f"{contents}")
